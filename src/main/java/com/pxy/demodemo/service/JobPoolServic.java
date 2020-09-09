@@ -4,6 +4,7 @@ package com.pxy.demodemo.service;
 import com.pxy.demodemo.model.JobInfo;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.concurrent.*;
 
 
@@ -21,6 +22,10 @@ public class JobPoolServic {
     // 存放工作信息的容器
     private static ConcurrentHashMap<String, JobInfo<?>> jobInfoMap
             = new ConcurrentHashMap<String, JobInfo<?>>();
+
+    public static Map<String,JobInfo<?>> getMap(){
+        return jobInfoMap;
+    }
 
 
 }
