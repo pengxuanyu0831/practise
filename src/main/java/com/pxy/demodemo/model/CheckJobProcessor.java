@@ -1,16 +1,28 @@
 package com.pxy.demodemo.model;
 
 import com.pxy.demodemo.service.JobPoolServic;
+import javafx.scene.control.CheckBox;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.DelayQueue;
 
+// 提供查询任务状态的类
+// 所有工作的调度类
 public class CheckJobProcessor {
     // 存放未执行任务的队列
     private static DelayQueue<ItemVo<String>> queue
             = new DelayQueue<>();
+
+    private static class CheckHolder{
+        public static CheckJobProcessor processor = new CheckJobProcessor();
+
+    }
+
+    public static CheckJobProcessor getInstance(){
+        return CheckHolder.processor;
+    }
     // 处理过期任务的方法
     private static class otTask implements Runnable{
         private static DelayQueue<ItemVo<String>> queue
@@ -18,6 +30,8 @@ public class CheckJobProcessor {
         // 缓存的工作信息
         private static Map<String,JobInfo<?>> jobInfoMap
                 = JobPoolServic.getMap();
+        // 单例化
+
 
 
 
