@@ -48,12 +48,13 @@ public class CheckJobProcessor {
             }
         }
     }
-        // 放入队列的任务，经过一定时间，会被清除出去
-        public void putJob(String jobName,long expireTime){
-            ItemVo<String> itemVo = new ItemVo<>(expireTime,jobName);
-            queue.offer(itemVo);
-            System.out.println(jobName + "任务已经过期");
-        }
+
+    }
+    // 放入队列的任务，经过一定时间，会被清除出去
+    public void putJob(String jobName,long expireTime){
+        ItemVo<String> itemVo = new ItemVo<>(expireTime,jobName);
+        queue.offer(itemVo);
+        System.out.println(jobName + "任务已经过期");
     }
 
 

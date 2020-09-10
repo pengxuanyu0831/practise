@@ -1,6 +1,10 @@
 package com.pxy.demodemo.model;
 
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,7 +23,7 @@ public class JobInfo<R> {
     private AtomicInteger taskProcesserCount;
 
     // 存放每个任务的处理结果
-    private LinkedBlockingQueue<TaskResult<R>> taskResultQueue;
+    private LinkedBlockingDeque<TaskResult<R>> taskResultQueue;
 
     // 任务超时时间
     private final long expireTime;
@@ -34,7 +38,7 @@ public class JobInfo<R> {
         this.expireTime = expireTime;
         successCount = new AtomicInteger();
         taskProcesserCount =new AtomicInteger();
-        taskResultQueue = new LinkedBlockingQueue<>(jobLength);
+        taskResultQueue = new LinkedBlockingDeque<TaskResult<R>>(jobLength);
 
     }
 
@@ -44,11 +48,40 @@ public class JobInfo<R> {
     public int getTaskProcesserCount() {
         return taskProcesserCount.get();
     }
-    public int getFalureCount(){
+    public int getFailureCount(){
         return taskProcesserCount.get() - successCount.get();
     }
     public int getJobLength(){
         return jobLength;
     }
+    public String getCurrentProcesser(){
+        return "Success:" + getSuccessCount() + "\n Failure:" + getFailureCount()
+                +"\n Total:" + getTaskProcesserCount();
+    }
+
+
+    // 提供工作中，每个任务的处理结果
+    private List<TaskResult<R>> getTaskDetail(){
+        List<TaskResult<R>> taskResultsList = new LinkedList<>();
+        TaskResult<R>taskResult;
+        while ((taskResult = taskResultQueue.pollFirst())!= null){
+            taskResultsList.add(taskResult);
+
+        }
+        return taskResultsList;
+     }
+    /*每个任务处理完成后，记录任务的处理结果*/
+     public void addTaskResult(TaskResult<R> taskResult){
+         // 如果任务处理成功
+        if(TaskResultEm.Success.equals(taskResult.getReturnValue())){
+            successCount.incrementAndGet();
+        }
+        taskProcesserCount.getAndIncrement();
+        taskResultQueue.addLast(taskResult);
+        if(getTaskProcesserCount() == jobLength){
+            checkJobProcessor.putJob(jobName,expireTime);
+        }
+
+     }
 
 }
