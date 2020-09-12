@@ -34,7 +34,7 @@ public class CheckJobProcessor {
 
 
 
-
+        // 到期任务的清除
         @Override
         public void run() {
         while(true){
@@ -54,11 +54,11 @@ public class CheckJobProcessor {
     public void putJob(String jobName,long expireTime){
         ItemVo<String> itemVo = new ItemVo<>(expireTime,jobName);
         queue.offer(itemVo);
-        System.out.println(jobName + "任务已经过期");
+        System.out.println(jobName + "任务已经过期 \n 已存在时长为 "+expireTime);
     }
 
-
-        static{
+    // static语句块在类被加载时就会运行
+    static{
             Thread thread = new Thread(new otTask());
             thread.setDaemon(true);
             thread.start();

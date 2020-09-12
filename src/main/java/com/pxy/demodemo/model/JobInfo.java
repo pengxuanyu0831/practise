@@ -54,6 +54,8 @@ public class JobInfo<R> {
     public int getJobLength(){
         return jobLength;
     }
+
+
     public String getCurrentProcesser(){
         return "Success:" + getSuccessCount() + "\n Failure:" + getFailureCount()
                 +"\n Total:" + getTaskProcesserCount();
@@ -61,7 +63,7 @@ public class JobInfo<R> {
 
 
     // 提供工作中，每个任务的处理结果
-    private List<TaskResult<R>> getTaskDetail(){
+    public List<TaskResult<R>> getTaskDetail(){
         List<TaskResult<R>> taskResultsList = new LinkedList<>();
         TaskResult<R>taskResult;
         while ((taskResult = taskResultQueue.pollFirst())!= null){
@@ -84,4 +86,7 @@ public class JobInfo<R> {
 
      }
 
+    public ITaskProcesser<?, ?> getTaskProcesser() {
+        return taskProcesser;
+    }
 }
