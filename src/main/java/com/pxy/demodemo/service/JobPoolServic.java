@@ -47,7 +47,7 @@ public class JobPoolServic {
     // 对工作中的任务进行包装，丢给线程池去执行
     // 对处理完的任务进行保存，以供查询
     public static class PoolTasks<T ,R> implements Runnable{
-        private JobInfo<R> jobInfo;
+        public JobInfo<R> jobInfo;
         private T proessData;
 
         public PoolTasks(JobInfo<R> jobInfo, T proessData) {
@@ -74,7 +74,6 @@ public class JobPoolServic {
 
                     }else{
                         result = new TaskResult<R>(TaskResultEm.Exception,r,"reslut is null" + result.getReson());
-
                     }
                 }
             } catch (Exception e) {
@@ -85,30 +84,40 @@ public class JobPoolServic {
             }
         }
 
-        private <R> JobInfo<R> getJob(String jobName){
-            JobInfo<R> jobInfo = (JobInfo<R>) jobInfoMap.get(jobName);
-            if (null==jobInfo)
-                throw new RuntimeException(jobName+"是非法任务！");
-            return jobInfo;
-        }
 
-        public <T,R > void  putTask(String jobName,T t){
-            JobInfo<R> jobInfo = getJob(jobName);
-            PoolTasks<T,R> poolTasks = new PoolTasks<>(jobInfo,t);
-            taskExecutor.execute(poolTasks);
 
-        }
-        // 获取每个任务的信息
-        public <R> List<TaskResult<R>> getTaskDetail(String jobName){
-            JobInfo<R> jobInfo = getJob(jobName);
-            return jobInfo.getTaskDetail();
-        }
+    }
 
-        // 获取整体任务的信息
-        public <R> String getTaskProcess(String jobName){
-            JobInfo<R> jobInfoPro = getJob(jobName);
-            return jobInfoPro.getCurrentProcesser();
+    public <R> void registerJob(String jobName,int jobLength,ITaskProcesser<?, ?> taskProcesser,long expireTime){
+        JobInfo<R> jobInfo = new JobInfo<>(jobName,jobLength,taskProcesser,expireTime);
+        if(jobInfoMap.putIfAbsent(jobName,jobInfo) != null){
+            throw new RuntimeException("该任务已经注册过了");
         }
+    }
+
+    private <R> JobInfo<R> getJob(String jobName){
+        JobInfo<R> jobInfo = (JobInfo<R>) jobInfoMap.get(jobName);
+        if (null==jobInfo)
+            throw new RuntimeException(jobName+"是非法任务！");
+        return jobInfo;
+    }
+
+    public <T,R > void  putTask(String jobName,T t){
+        JobInfo<R> jobInfo = getJob(jobName);
+        PoolTasks<T,R> poolTasks = new PoolTasks<>(jobInfo,t);
+        taskExecutor.execute(poolTasks);
+
+    }
+    // 获取每个任务的信息
+    public <R> List<TaskResult<R>> getTaskDetail(String jobName){
+        JobInfo<R> jobInfo = getJob(jobName);
+        return jobInfo.getTaskDetail();
+    }
+
+    // 获取整体任务的信息
+    public <R> String getTaskProcess(String jobName){
+        JobInfo<R> jobInfoPro = getJob(jobName);
+        return jobInfoPro.getCurrentProcesser();
     }
 
 
