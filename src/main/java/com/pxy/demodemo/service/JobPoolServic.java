@@ -19,6 +19,7 @@ public class JobPoolServic {
             = Runtime.getRuntime().availableProcessors();
     // 存放带执行的任务
     private static BlockingQueue<Runnable> taskQueue
+            // arraryBlockingQueue  数组结构，有界阻塞队列，需指定容量、是否公平，默认非公平
             = new ArrayBlockingQueue<>(5000);
     // 线程池，用于存放固定数量的线程
     // 有界队列

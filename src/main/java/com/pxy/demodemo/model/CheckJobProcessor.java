@@ -3,6 +3,7 @@ package com.pxy.demodemo.model;
 import com.pxy.demodemo.service.JobPoolServic;
 import javafx.scene.control.CheckBox;
 
+import java.lang.ref.SoftReference;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -13,6 +14,7 @@ import java.util.concurrent.DelayQueue;
 public class CheckJobProcessor {
     // 存放未执行任务的队列
     private static DelayQueue<ItemVo<String>> queue
+            // delayQueur  优先级队列实现的无界阻塞队列，用于存放未执行的任务
             = new DelayQueue<>();
 
     private static class CheckHolder{

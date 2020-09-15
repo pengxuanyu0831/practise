@@ -23,6 +23,7 @@ public class JobInfo<R> {
     private AtomicInteger taskProcesserCount;
 
     // 存放每个任务的处理结果
+    // linkedBlockingQueue  链表结构的有界阻塞队列
     private LinkedBlockingDeque<TaskResult<R>> taskResultQueue;
 
     // 任务超时时间
