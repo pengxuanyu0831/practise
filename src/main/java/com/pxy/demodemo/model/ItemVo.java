@@ -2,8 +2,9 @@ package com.pxy.demodemo.model;
 
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
-
+// 实现了Delay接口，用于存放延时队列的元素
 public class ItemVo<T> implements Delayed {
+    // 过期时长
     private long activeTime;
     private T data;
 
